@@ -74,8 +74,8 @@ CreateThread(function()
                                         end
                                     end
                                 end
-                                Wait(Sleep)
                             end
+			    Wait(Sleep)
                         end
                     end)
                 end 
