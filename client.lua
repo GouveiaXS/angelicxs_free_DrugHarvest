@@ -2,6 +2,7 @@ ESX = nil
 QBcore = nil
 PlayerJob = nil
 PlayerData = nil
+local GatherBusy = false
 
 CreateThread(function()
     if Config.UseESX then
@@ -43,60 +44,56 @@ RegisterNetEvent('angelicxs-drugHarvest:Notify', function(message, type)
 end)
 
 CreateThread(function()
-    while true do
-        local Sleep = 2000
-        local Player = PlayerPedId()
-        local Pos = GetEntityCoords(Player)
-        for harvestName, harvestInfo in pairs(Config.HarvestList) do
-            for index, data in pairs (harvestInfo) do
-                if index == 'pickLocations' then
-                    for i = 1, #data, 1 do
-                        local Dist = #(Pos - data[i])
-                        if Dist <= 50 then
-                            Sleep = 500
-                            if Dist <= 10 then
-                                Sleep = 100
-                                if Dist <= 5 then
-                                    Sleep = 0
-                                    while true do
-                                        Pos = GetEntityCoords(Player)
-                                        Dist = #(Pos - data[i]) 
+    for harvestName, harvestInfo in pairs(Config.HarvestList) do
+        for index, data in pairs (harvestInfo) do
+            if index == 'pickLocations' then
+                for i = 1, #data, 1 do
+                    CreateThread(function()
+                        while true do
+                            local Player = PlayerPedId()
+                            local Pos = GetEntityCoords(PlayerPedId())
+                            local Sleep = 2000
+                            local Dist = #(Pos - data[i])
+                            if Dist <= 50 then
+                                Sleep = 1000
+                                if Dist <= 10 then
+                                    Sleep = 500
+                                    if Dist <= 5 then
+                                        Sleep = 0
                                         if Config.Show3DMarker then
                                             Draw3DMarker(data[i][1],data[i][2],data[i][3])
                                         end
                                         if Dist <= 3 then
-                                            if IsControlJustReleased(0, 38) then
+                                            if IsControlJustReleased(0, 38) not GatherBusy then
                                                 TriggerEvent('angelicxs-drugHarvest:HarvestItem', harvestInfo)
+                                                GatherBusy = true
                                             end
                                             if Config.Show3DText then
                                                 DrawText3Ds(data[i][1],data[i][2],data[i][3], Config.Lang['harvest'])
                                             end
                                         end
-                                        if Dist > 5 then
-                                            break
-                                        end
-                                        Wait(Sleep)
                                     end
                                 end
+                                Wait(Sleep)
                             end
                         end
-                    end 
-                end
+                    end)
+                end 
             end
         end
-        Wait(Sleep)
     end
 end)
 
-RegisterNetEvent('angelicxs-drugHarvest:HarvestItem', function(harvestInfo)
+function HarvestItem(harvestInfo)
     local Player = PlayerPedId()
     FreezeEntityPosition(Player, true)
     Animation(harvestInfo.dictionary, harvestInfo.animation)
     Wait(harvestInfo.gatherTime*1000)
+    GatherBusy = false
     FreezeEntityPosition(Player, false)
     ClearPedTasks(Player)
     TriggerServerEvent('angelicxs-drugHarvest:Server:ReceiveItem', harvestInfo, PlayerJob)
-end)
+end
 
 function Animation(dict, anim)
     local ped = PlayerPedId()
