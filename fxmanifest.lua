@@ -2,7 +2,7 @@ fx_version 'cerulean'
 game 'gta5'
 
 author 'AngelicXS'
-version '1.2.0'
+version '1.3.0'
 lua54 'yes'
 client_script 'client.lua'
 
