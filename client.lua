@@ -64,7 +64,7 @@ CreateThread(function()
                                             Draw3DMarker(data[i][1],data[i][2],data[i][3])
                                         end
                                         if Dist <= 3 then
-                                            if IsControlJustReleased(0, 38) not GatherBusy then
+                                            if IsControlJustReleased(0, 38) and not GatherBusy then
                                                 TriggerEvent('angelicxs-drugHarvest:HarvestItem', harvestInfo)
                                                 GatherBusy = true
                                             end
