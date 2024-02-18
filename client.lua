@@ -65,7 +65,7 @@ CreateThread(function()
                                         end
                                         if Dist <= 3 then
                                             if IsControlJustReleased(0, 38) and not GatherBusy then
-                                                TriggerEvent('angelicxs-drugHarvest:HarvestItem', harvestInfo)
+						HarvestItem(harvestInfo)
                                                 GatherBusy = true
                                             end
                                             if Config.Show3DText then
