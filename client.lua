@@ -65,8 +65,8 @@ CreateThread(function()
                                         end
                                         if Dist <= 3 then
                                             if IsControlJustReleased(0, 38) and not GatherBusy then
-						HarvestItem(harvestInfo)
-                                                GatherBusy = true
+						GatherBusy = true
+						HarvestItem(harvestInfo)                                       
                                             end
                                             if Config.Show3DText then
                                                 DrawText3Ds(data[i][1],data[i][2],data[i][3], Config.Lang['harvest'])
